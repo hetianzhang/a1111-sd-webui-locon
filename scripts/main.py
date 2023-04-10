@@ -654,8 +654,9 @@ def rebuild_weight(module, orig_weight: torch.Tensor) -> torch.Tensor:
         down = module.down_model.weight.to(orig_weight.device, dtype=orig_weight.dtype)
         
         output_shape = [up.size(0), down.size(1)]
-        if (mid:=module.mid_model) is not None:
+        if module.mid_model is not None:
             # cp-decomposition
+            mid = module.mid_model
             mid = mid.weight.to(orig_weight.device, dtype=orig_weight.dtype)
             updown = _rebuild_cp_decomposition(up, down, mid)
             output_shape += mid.shape[2:]
